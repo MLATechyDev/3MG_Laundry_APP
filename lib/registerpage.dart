@@ -242,6 +242,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final docUser = FirebaseFirestore.instance.collection('userAuth').doc();
 
     docUser.set({
+      'firstname':firstnameController.text,
+      'lastname': lastnameController.text,
       'id': docUser.id,
       'email': emailController.text,
       'password': passwordController.text,

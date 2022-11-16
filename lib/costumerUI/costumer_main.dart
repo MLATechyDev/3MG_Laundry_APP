@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:laundryapp/costumerUI/infos/admin_message.dart';
+import 'package:laundryapp/costumerUI/pages/client_acc_log.dart';
 import 'package:laundryapp/costumerUI/pages/set_a_laundry.dart';
 import 'package:laundryapp/costumerUI/pages/track_laundry.dart';
 
@@ -14,9 +16,11 @@ class CostumerMainPage extends StatefulWidget {
 }
 
 class _CostumerMainPageState extends State<CostumerMainPage> {
+    final getDate = DateTime.now();
   final pages = [
     const SetALaundryPage(),
     const TrackLaundry(),
+    ClientAccountLogs(),
   ];
 
   int index = 0;
@@ -143,6 +147,24 @@ class _CostumerMainPageState extends State<CostumerMainPage> {
                 });
                 Navigator.pop(context);
               },
+            ), const Divider(
+              thickness: 1,
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.list_alt,
+                size: 40,
+              ),
+              title: const Text(
+                'LOGS',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              onTap: () {
+                setState(() {
+                  index = 2;
+                });
+                Navigator.pop(context);
+              },
             ),
             
             const SizedBox(height: 200,),
@@ -155,7 +177,17 @@ class _CostumerMainPageState extends State<CostumerMainPage> {
                 'LOG OUT',
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
-              onTap: () {
+              onTap: () async{
+                final docUser =
+                    FirebaseFirestore.instance.collection('loginLogs').doc();
+
+                await docUser.set({
+                  'id': docUser.id,
+                  'email': FirebaseAuth.instance.currentUser!.email,
+                  'status': 'logout',
+                  'time': DateFormat('hh:mm a').format(getDate),
+                  'date': DateFormat('yyyy-MM-dd').format(getDate),
+                });
                FirebaseAuth.instance.signOut();
               },
             ),

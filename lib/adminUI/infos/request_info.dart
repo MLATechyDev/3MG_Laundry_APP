@@ -164,6 +164,7 @@ class _RequestInfoState extends State<RequestInfo> {
                                 .collection('adminMessage')
                                 .doc();
                              docUser.set({
+                              'isRead':'notread',
                               'uid': widget.uid,
                               'id': docUser.id,
                               'message': messageTEC.text,

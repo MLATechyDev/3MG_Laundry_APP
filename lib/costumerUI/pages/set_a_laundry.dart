@@ -13,7 +13,6 @@ class SetALaundryPage extends StatefulWidget {
 }
 
 class _SetALaundryPageState extends State<SetALaundryPage> {
-
   final datetimeNow = DateTime.now();
   final formKey = GlobalKey<FormState>();
   String schedule = 'null';
@@ -50,81 +49,7 @@ class _SetALaundryPageState extends State<SetALaundryPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              TextFormField(
-                validator: (value) {
-                  if (firstnameController.text.isEmpty || value == null) {
-                    return 'Please fill this field';
-                  }
-                },
-                controller: firstnameController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
-                  label: const Text(
-                    'FIRSTNAME',
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2.0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                validator: (value) {
-                  if (lastnameController.text.isEmpty || value == null) {
-                    return 'Please fill this field';
-                  }
-                },
-                controller: lastnameController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
-                  label: const Text(
-                    'LASTNAME',
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2.0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                validator: (value) {
-                  if (contactController.text.isEmpty || value == null) {
-                    return 'Please fill this field';
-                  }
-                },
-                controller: contactController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
-                  label: const Text(
-                    'CONTACT NUMBER',
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2.0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                validator: (value) {
-                  if (emailController.text.isEmpty || value == null) {
-                    return 'Please fill this field';
-                  }
-                },
-                controller: emailController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
-                  label: const Text(
-                    'EMAIL',
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2.0),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
+              dataTextField(),
               const SizedBox(height: 15),
               Text(
                 'ADDRESSES',
@@ -358,11 +283,10 @@ class _SetALaundryPageState extends State<SetALaundryPage> {
                     provinceController.clear();
                     postalcodeController.clear();
                     Fluttertoast.showToast(msg: 'Laundry Schedule Set');
-
                   } else {
-                    Fluttertoast.showToast(msg: 'Please select preferred schedule');
+                    Fluttertoast.showToast(
+                        msg: 'Please select preferred schedule');
                   }
-
                 },
                 child: Text(
                   'CONFIRM',
@@ -384,6 +308,104 @@ class _SetALaundryPageState extends State<SetALaundryPage> {
     );
   }
 
+  Widget dataTextField() {
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('userAuth')
+            .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if(snapshot.hasError){
+            return Text('Something went wrong');
+          }
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return CircularProgressIndicator();
+          }
+          final data = snapshot.requireData;
+          firstnameController.text = data.docs.first['firstname'];
+          lastnameController.text = data.docs.first['lastname'];
+          emailController.text = data.docs.first['email'];
+
+          return Column(children: [
+            TextFormField(
+                validator: (value) {
+                  if (firstnameController.text.isEmpty || value == null) {
+                    return 'Please fill this field';
+                  }
+                },
+                controller: firstnameController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(8),
+                  label: const Text(
+                    'FIRSTNAME',
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2.0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                validator: (value) {
+                  if (lastnameController.text.isEmpty || value == null) {
+                    return 'Please fill this field';
+                  }
+                },
+                controller: lastnameController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(8),
+                  label: const Text(
+                    'LASTNAME',
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2.0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                validator: (value) {
+                  if (contactController.text.isEmpty || value == null) {
+                    return 'Please fill this field';
+                  }
+                },
+                controller: contactController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(8),
+                  label: const Text(
+                    'CONTACT NUMBER',
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2.0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                validator: (value) {
+                  if (emailController.text.isEmpty || value == null) {
+                    return 'Please fill this field';
+                  }
+                },
+                controller: emailController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(8),
+                  label: const Text(
+                    'EMAIL',
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2.0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+          ],);
+        });
+  }
+
   Future setLaundry() async {
     final docUser =
         FirebaseFirestore.instance.collection('customerDetails').doc();
@@ -397,7 +419,7 @@ class _SetALaundryPageState extends State<SetALaundryPage> {
       'address':
           '${streetController.text} ${brgyController.text}, ${municipalityController.text}, ${provinceController.text}, ${postalcodeController.text}',
       'schedule': schedule,
-      'status' : 'pending',
+      'status': 'pending',
       'time': DateFormat('hh:mm a').format(datetimeNow).toString(),
       'date': DateFormat('yyyy-MM-dd').format(datetimeNow).toString(),
     });
